@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import logo from './assets/logo-nlw-expert.svg'
 import { NewNoteCard } from './components/new-note-card'
 import { NoteCard } from './components/note-card'
@@ -10,6 +10,7 @@ type NoteType = {
 }
 
 export function App() {
+  const [query, setQuery] = useState('')
   const [notes, setNotes] = useState<NoteType[]>( () => {
     const notes = localStorage.getItem('notes')
     if(notes) 
@@ -17,6 +18,10 @@ export function App() {
     else
       return [] 
   })
+  const filteredNotes = query != '' ?
+    notes.filter(note => note.content.toLocaleLowerCase().includes(query.toLocaleLowerCase()))
+  :
+    notes
   
   function onNoteCreated(text: string) {
     const newNote = {
@@ -30,11 +35,26 @@ export function App() {
     localStorage.setItem('notes', JSON.stringify(notesArray))
   }
 
+  function handleUserSearch(event: ChangeEvent<HTMLInputElement>) {
+    setQuery(event.target.value)
+  }
+
+  function onNoteDeleted(id: string) {
+    const notesArray = notes.filter(note => {
+      return note.id !== id
+    })
+
+    setNotes(notesArray)
+
+    localStorage.setItem('notes', JSON.stringify(notesArray))
+  }
+
   return (
-    <div className='mx-auto max-w-6xl my-12 space-y-6'>
+    <div className='mx-auto max-w-6xl my-12 space-y-6 px-5 lg:px-0'>
       <img src={logo} alt='NLW Expert'/>
       <form className='w-full'>
         <input
+          onChange={handleUserSearch}
           className='w-full bg-transparent text-3xl font-semibold tracking-tight placeholder: text-slate-500 outline-none' 
           type='text'
           placeholder='Busque em suas notas...'>  
@@ -43,12 +63,12 @@ export function App() {
 
       <div className='h-px bg-slate-700'/>
 
-      <div className='grid grid-cols-3 auto-rows-[250px] gap-6'>
+      <div className='grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 auto-rows-[250px] gap-6'>
         
         <NewNoteCard onNoteCreated={onNoteCreated}/>
 
-        {notes.map(note => {
-          return <NoteCard key={note.id} note={note}/>
+        {filteredNotes.map(note => {
+          return <NoteCard key={note.id} note={note} onNoteDeleted={onNoteDeleted}/>
         })}
 
       </div>

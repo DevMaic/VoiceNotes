@@ -5,12 +5,14 @@ import { X } from 'lucide-react'
 
 type NoteCardProps = {
     note: {
+      id: string
       date: Date
       content: string
-    }
+    },
+    onNoteDeleted: (id: string) => void
 }
 
-export function NoteCard({note}: NoteCardProps) {
+export function NoteCard({note, onNoteDeleted}: NoteCardProps) {
     return (
       <Dialog.Root>
         <Dialog.Trigger className='flex flex-col text-left rounded-md bg-slate-800 p-5 overflow-hidden relative hover:ring-slate-600
@@ -29,7 +31,7 @@ export function NoteCard({note}: NoteCardProps) {
 
           </Dialog.DialogOverlay>
           
-          <Dialog.Content className='flex flex-col fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-md bg-slate-700 max-w-[60vh] w-full max-h-[60vh] h-full outline-none overflow-hidden'>
+          <Dialog.Content className='inset-0 md:inset-auto flex flex-col fixed md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-md bg-slate-700 md:max-w-[60vh] w-full md:max-h-[60vh] h-full outline-none overflow-hidden'>
             
             <Dialog.DialogClose className='absolute right-0 top-0 p-1.5 text-slate-400 bg-slate-800 hover:text-slate-100 rounded-bl-md outline-none'>
               <X/>
@@ -44,7 +46,7 @@ export function NoteCard({note}: NoteCardProps) {
               </div>
             </div>
 
-            <button  className='group w-full bg-slate-800 py-4 text-center text-sm text-slate-300 self-end' type='button'>
+            <button  className='group w-full bg-slate-800 py-4 text-center text-sm text-slate-300 self-end' type='button' onClick={() => onNoteDeleted(note.id)}>
               Deseja <span className='text-red-400 group-hover:underline'>apagar a nota?</span>
             </button> 
             
